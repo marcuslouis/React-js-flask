@@ -1,6 +1,6 @@
 import React, { useState, useContext } from "react";
 import { Context } from "../store/appContext";
-import { Link } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 
 export const Signup = () => {
   const [email, setEmail] = useState("");
@@ -9,7 +9,11 @@ export const Signup = () => {
   const [last_name, setLast_name] = useState("");
   const [dob, setDob] = useState("");
   const { store, actions } = useContext(Context);
+  let history = useHistory();
   const is_active = true;
+  if (is_active == true) {
+    history.push();
+  }
   return (
     <form>
       <div className="form-group">
@@ -76,30 +80,30 @@ export const Signup = () => {
           Check me out
         </label>
       </div>
-      <Link to="/page">
-        <button
-          onClick={(e) => {
-            e.preventDefault();
-            fetch(process.env.BACKEND_URL + "/api/signup", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                email: email,
-                password: password,
-                first_name: first_name,
-                last_name: last_name,
-                dob: dob,
-              }),
-            });
-          }}
-          type="submit"
-          className="btn btn-primary"
-        >
-          Submit
-        </button>
-      </Link>
+
+      <button
+        onClick={(e) => {
+          e.preventDefault();
+          fetch(process.env.BACKEND_URL + "/api/signup", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              email: email,
+              password: password,
+              first_name: first_name,
+              last_name: last_name,
+              dob: dob,
+            }),
+          });
+          history.push("/page");
+        }}
+        type="submit"
+        className="btn btn-primary"
+      >
+        Submit
+      </button>
     </form>
   );
 };

@@ -2,6 +2,7 @@ const getState = ({ getStore, getActions, setStore }) => {
   return {
     store: {
       message: null,
+      token: null,
       demo: [
         {
           title: "FIRST",
@@ -39,6 +40,30 @@ const getState = ({ getStore, getActions, setStore }) => {
           },
           body: JSON.stringify({ email, password }),
         });
+      },
+      getLogin: (email, password) => {
+        let user = {
+          email: email,
+          password: password,
+        };
+        fetch(process.env.BACKEND_URL + "/api/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(user),
+        })
+          .then((response) => response.json())
+          .then((result) => console.log(result))
+          .catch((error) => console.log("error", error));
+      },
+      getProtected: (token) => {
+        fetch(process.env.BACKEND_URL + "/api/login", {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }).then((result) => setStore({ demo: result }));
       },
       changeColor: (index, color) => {
         //get the store

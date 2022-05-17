@@ -5,6 +5,10 @@ from flask import Flask, request, jsonify, url_for, Blueprint
 from api.models import db, User
 from api.utils import generate_sitemap, APIException
 
+from flask_jwt_extended import create_access_token
+from flask_jwt_extended import get_jwt_identity
+from flask_jwt_extended import jwt_required
+
 api = Blueprint('api', __name__)
 
 
@@ -54,10 +58,23 @@ def get1_login():
 
 @api.route('/login', methods=['POST'])
 def create_login():
-    response_body = request.get_json()
-    response_body = User.query.filter(User.email=data['email'])
-    if User is None:
-        return 404
-    db.session.add()
-    db.session.commit()
-    return "success"
+    body = request.get_json()
+    if "email" not in body or body ['email'] == "":
+        raise APIException("User not foud", status_code=400)
+    if "password" not in body or body ['password'] == "":
+        raise APIException("User not foud", status_code=400)
+
+    user = User.query.filter_by(email=body['email']).first()
+
+    if user == None or body['password'] != user.password:
+        raise APIException("User not found or password incorrect", status_code=400)
+    else:
+        access_token = create_access_token(identity=body['email'])
+        return jsonify(access_token=access_token)
+
+@api.route("/protected", methods=["GET"])
+@jwt_required()
+def protected():
+    current_user=get_jwt_identity()
+    user = User.query.filter_by(email=current_user).first()
+    return jsonify({"first_name": user.first_name, "email": user.email}), 200
