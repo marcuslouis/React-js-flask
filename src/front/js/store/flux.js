@@ -3,6 +3,7 @@ const getState = ({ getStore, getActions, setStore }) => {
     store: {
       message: null,
       token: null,
+      user: null,
       demo: [
         {
           title: "FIRST",
@@ -31,15 +32,18 @@ const getState = ({ getStore, getActions, setStore }) => {
             console.log("Error loading message from backend", error)
           );
       },
-      getUser: (email, password) => {
+      signUp: (user) => {
         fetch(process.env.BACKEND_URL + "/api/signup", {
           method: "POST",
-          mode: "no-cors",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ email, password }),
-        });
+          body: JSON.stringify(user),
+          redirect: "follow",
+        })
+          .then((response) => response.json())
+          .then((result) => console.log(result))
+          .catch((error) => console.log(error));
       },
       getLogin: (email, password) => {
         let user = {
@@ -52,18 +56,25 @@ const getState = ({ getStore, getActions, setStore }) => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify(user),
+          redirect: "follow",
         })
           .then((response) => response.json())
-          .then((result) => console.log(result))
+          .then((result) => getActions().getProtected(result.access_token))
           .catch((error) => console.log("error", error));
       },
       getProtected: (token) => {
-        fetch(process.env.BACKEND_URL + "/api/login", {
+        fetch(process.env.BACKEND_URL + "/api/protected", {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }).then((result) => setStore({ demo: result }));
+        })
+          .then((response) => response.json())
+          .then((result) => setStore({ user: result }))
+          .catch((error) => console.log("error", error));
+      },
+      logout: () => {
+        setStore({ user: null });
       },
       changeColor: (index, color) => {
         //get the store

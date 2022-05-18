@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
-
+import { useHistory } from "react-router-dom";
 import { Context } from "../store/appContext";
 
-export const Demo = () => {
+export const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { store, actions } = useContext(Context);
+  let history = useHistory();
 
   return (
     <div>
@@ -14,12 +15,12 @@ export const Demo = () => {
         <div className="form-group">
           <label for="exampleInputEmail1">Email address</label>
           <input
+            onChange={(e) => setEmail(e.target.value)}
             value={email}
             type="email"
             className="form-control"
             id="exampleInputEmail1"
             aria-describedby="emailHelp"
-            onChange={(e) => setEmail(e.target.value)}
           />
           <small id="emailHelp" className="form-text text-muted">
             We'll never share your email with anyone else.
@@ -28,11 +29,11 @@ export const Demo = () => {
         <div className="form-group">
           <label for="exampleInputPassword1">Password</label>
           <input
+            onChange={(e) => setPassword(e.target.value)}
             value={password}
             type="password"
             className="form-control"
             id="exampleInputPassword1"
-            onChange={(e) => setPassword(e.target.value)}
           />
         </div>
         <div className="form-group form-check">
@@ -48,7 +49,12 @@ export const Demo = () => {
         <button
           onClick={(e) => {
             e.preventDefault();
-            actions.getLogin(email, password);
+            if (email === "" || password === "") {
+              alert("The input cannot be empty");
+            } else {
+              actions.getLogin(email, password);
+              history.push("/home");
+            }
           }}
           type="submit"
           className="btn btn-primary"

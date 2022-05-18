@@ -84,20 +84,14 @@ export const Signup = () => {
       <button
         onClick={(e) => {
           e.preventDefault();
-          fetch(process.env.BACKEND_URL + "/api/signup", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              email: email,
-              password: password,
-              first_name: first_name,
-              last_name: last_name,
-              dob: dob,
-            }),
+          actions.signUp({
+            email: email,
+            password: password,
+            first_name: first_name,
+            last_name: last_name,
+            dob: dob,
           });
-          history.push("/page");
+          history.push("/login");
         }}
         type="submit"
         className="btn btn-primary"

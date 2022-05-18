@@ -43,19 +43,6 @@ def create_user():
     return "success", 200
 
 
-@api.route('/login', methods=['GET'])
-def get_login():
-    login = Login.query.all()
-    login_list = list(map(lambda x: x.serialize(),login))
-    return jsonify(login_list), 200
-
-
-@api.route('/login/<int:login_id>', methods=['GET'])
-def get1_login():
-    login = Login.query.get(login_id)
-    return jsonify(login)
-
-
 @api.route('/login', methods=['POST'])
 def create_login():
     body = request.get_json()
@@ -78,3 +65,5 @@ def protected():
     current_user=get_jwt_identity()
     user = User.query.filter_by(email=current_user).first()
     return jsonify({"first_name": user.first_name, "email": user.email}), 200
+
+
