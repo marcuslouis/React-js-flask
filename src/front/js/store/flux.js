@@ -74,7 +74,7 @@ const getState = ({ getStore, getActions, setStore }) => {
           .catch((error) => console.log("error", error));
       },
       logout: () => {
-        setStore({ user: null });
+        setStore({ user: [] });
       },
       changeColor: (index, color) => {
         //get the store
